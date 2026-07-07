@@ -22,10 +22,27 @@ fn main() {
                     .read(&mut buffer)
                     .expect("Failed to read from stream");
 
-                println!("----- HTTP Request -----");
                 // HTTPはネットワーク上では文字ではなくバイト列として送られてくるので、文字列に変換
-                println!("{}", String::from_utf8_lossy(&buffer[..n]));  // 読み込めた分だけ出力
-                println!("------------------------");
+                let request = String::from_utf8_lossy(&buffer[..n]);
+
+                // （目標）最初の1行を取り出す
+                // 【lines()】
+                // GET / HTTP/1.1 Host: ... Connection: ... といった文字列を
+                // 行ごとに ["GET / HTTP/1.1", "Host: ...", "Connection: ...", ...] 配列へ変換する
+                // 【next()】 最初の１行 = "GET / HTTP/1.1" を取ってくる
+                // 【unwrap()】 Some(引数)の引数のみを取り出す
+                let request_line = request.lines().next().unwrap();
+
+                // "GET / HTTP/1.1" を空白で区切って、配列にする
+                let parts: Vec<&str> = request_line.split_whitespace().collect();
+
+                // 配列のパターンマッチで分解して、表示
+                if let [method, path, version] = parts.as_slice() {
+                    println!("Method : {}", method);
+                    println!("Path   : {}", path);
+                    println!("Version: {}", version);
+                }
+
             }
             Err(e) => {
                 eprintln!("Connection failed: {}", e);
