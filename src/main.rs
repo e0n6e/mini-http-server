@@ -37,7 +37,30 @@ fn main() {
                 let parts: Vec<&str> = request_line.split_whitespace().collect();
 
                 // 配列のパターンマッチで分解して、表示
-                if let [method, path, version] = parts.as_slice() {
+                if let [method, path, version] = parts.as_slice() { // method, path, version の中身はポインタであることに注意！
+
+                    // method をHTTPメソッド別の処理を書く
+                    match *method {
+                        "GET" => {
+                            println!("=== GET ===");
+                            println!("Retrieve resource");
+                        }
+                        "POST" => {
+                            println!("=== POST ===");
+                            println!("Create new resource");
+                        }
+                        "PUT" => {
+                            println!("=== PUT ===");
+                            println!("Update resource");
+                        }
+                        "DELETE" => {
+                            println!("=== DELETE ===");
+                            println!("Delete resource");
+                        }
+                        _ => {
+                            println!("Unknown method");
+                        }
+                    }
                     println!("Method : {}", method);
                     println!("Path   : {}", path);
                     println!("Version: {}", version);
